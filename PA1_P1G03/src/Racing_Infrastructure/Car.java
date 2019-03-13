@@ -14,6 +14,7 @@ public class Car extends Thread{
     private ParkingMonitor parkingMonitor;
     private RaceMonitor raceMonitor;
     private int currentPosition = 0;
+    private boolean isFinished=false;
 
     public Car(int id, ParkingMonitor parkingMonitor, RaceMonitor raceMonitor) {
         this.id = id;
@@ -31,8 +32,10 @@ public class Car extends Thread{
         while(currentPosition < raceMonitor.trackSize() ){
             raceMonitor.move(this);
         }
-        System.out.println("I am car "+id+" and I finished the race");
-        
+        isFinished = true;
+        System.out.println("I am car: "+id+" and i finished");
+        raceMonitor.finish(this);
+        System.out.println("Car id:"+id);
     }
     
     public int getCurrentPosition(){
@@ -46,5 +49,9 @@ public class Car extends Thread{
     public int getid(){
         return id;
     }
+    public boolean isFinished(){
+        return isFinished;
+    }
+    
     
 }
