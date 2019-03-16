@@ -21,10 +21,11 @@ public class ParkingMonitor {
     public ParkingMonitor(int numberOfCars){
         this.numberOfCars = numberOfCars;
     }
+    
 
-    public synchronized void waitingForNewRace() {
+    public synchronized void waitingForNewRace(int id) {
         try {
-            System.out.println("Waiting for a race ... ");
+            System.out.println("Car nº"+ id+" waiting for a race ... ");
             parkedCars++;
             while (waitingRace) {
                 wait();

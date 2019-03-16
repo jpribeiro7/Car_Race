@@ -23,7 +23,7 @@ public class RaceMonitor {
     private ReentrantLock rl;
     private List<Condition> move;
     private boolean finish = false;
-    private int startedCars;
+    private int startedCars=0;
     private int movedCars;
     private int totalCars;
     private int finishedCars;
@@ -38,7 +38,7 @@ public class RaceMonitor {
         }
         this.trackSize = trackSize;
     }
-
+    
     public void startRace(Car car) {
         rl.lock();
         try {
@@ -58,7 +58,7 @@ public class RaceMonitor {
         }
     }
 
-    public void move(Car car) {
+    public void move(Car car, int time) throws InterruptedException {
         rl.lock();
         try {
             while (movedCars != car.getid()) // wait for Dec Thread to decrement count
@@ -72,7 +72,8 @@ public class RaceMonitor {
             // move random amount of steps
             int steps = generateRandomStep();
             car.move(steps);
-            
+
+            Thread.sleep(time);
             int position = car.getCurrentPosition();
             if (position >= trackSize) {
                 finishedCars++;
