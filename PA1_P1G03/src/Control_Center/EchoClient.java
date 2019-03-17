@@ -48,18 +48,23 @@ public class EchoClient {
         
         // input stream from the console (messages to be sento to the server)
         BufferedReader stdIn = new BufferedReader( new InputStreamReader( System.in ) );
-        String NumCars;
-        System.out.println("Number of cars to race: ");
-        // not empty message?
+        BufferedReader stdIn1 = new BufferedReader( new InputStreamReader( System.in ) );
+        String NumCars,str;
         while( ( NumCars = stdIn.readLine() ).length() != 0 ) {
+            //if("stop".equals(NumCars))
+               
             // send the message to the server
-            out.println( NumCars );
+            out.println(NumCars);
             out.println("1");
             
             // wait for echo
             String txt = in.readLine();
             // print echo
             System.out.println( "Client received echo: " + txt );
+            
+            if((str = stdIn1.readLine()).length() !=0){
+                    out.println(str);
+            }
         }
         // empty message -> close connection
         out.close();

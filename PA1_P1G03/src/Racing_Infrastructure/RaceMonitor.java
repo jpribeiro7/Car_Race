@@ -28,6 +28,7 @@ public class RaceMonitor {
     private int totalCars;
     private int finishedCars;
     private int trackSize;
+    private int stop = 0;
 
     public RaceMonitor(int n_threads, int trackSize) {
         rl = new ReentrantLock(true);
@@ -58,9 +59,12 @@ public class RaceMonitor {
         }
     }
 
-    public void move(Car car, int time) throws InterruptedException {
+    public int move(Car car, int time, int st) throws InterruptedException {
         rl.lock();
         try {
+            stop = st;
+            if(stop != 0)
+                return 1;
             while (movedCars != car.getid()) // wait for Dec Thread to decrement count
             {
                 move.get(car.getid()).await();
@@ -91,6 +95,7 @@ public class RaceMonitor {
             System.out.println("Car: " + car.getid() + " is in position: " + position);
             rl.unlock();
         }
+        return 0;
     }
 
     public void finish(Car car) {

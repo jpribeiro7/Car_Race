@@ -38,7 +38,7 @@ public class Main {
         // Threads to increment
         for (int i=0; i<nIncThreads; i++) {
             // create instance of class extending Thread
-            myThreadAdd[i] = new Car(i,parkingMonitor, raceMonitor, num, sec);
+            myThreadAdd[i] = new Car(i,parkingMonitor, raceMonitor, num, sec,0);
             // launch thread
             myThreadAdd[i].start();
         }
