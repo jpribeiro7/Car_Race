@@ -23,12 +23,12 @@ public class RaceMonitor {
     private ReentrantLock rl;
     private List<Condition> move;
     private boolean finish = false;
+    private boolean startRace = false;
     private int startedCars=0;
     private int movedCars;
     private int totalCars;
     private int finishedCars;
     private int trackSize;
-    private int stop = 0;
 
     public RaceMonitor(int n_threads, int trackSize) {
         rl = new ReentrantLock(true);
@@ -43,7 +43,7 @@ public class RaceMonitor {
     public void startRace(Car car) {
         rl.lock();
         try {
-            while (startedCars != car.getid()) // wait for Dec Thread to decrement coun
+            while (startedCars != car.getid() || startRace) 
             {
                 move.get(car.getid()).await();
             }
@@ -53,18 +53,17 @@ public class RaceMonitor {
             startedCars++;
             if (startedCars != totalCars) {
                 move.get(car.getid() + 1).signal();
+            }else{
+                
             }
-            System.out.println("Car " + car.getid() + " can start the race");
+            System.out.println("I am car: " + car.getid() + " can start the race");
             rl.unlock();
         }
     }
 
-    public int move(Car car, int time, int st) throws InterruptedException {
+    public void move(Car car){
         rl.lock();
         try {
-            stop = st;
-            if(stop != 0)
-                return 1;
             while (movedCars != car.getid()) // wait for Dec Thread to decrement count
             {
                 move.get(car.getid()).await();
@@ -77,7 +76,7 @@ public class RaceMonitor {
             int steps = generateRandomStep();
             car.move(steps);
 
-            Thread.sleep(time);
+            //Thread.sleep(time);
             int position = car.getCurrentPosition();
             if (position >= trackSize) {
                 finishedCars++;
@@ -92,10 +91,9 @@ public class RaceMonitor {
             }
             
 
-            System.out.println("Car: " + car.getid() + " is in position: " + position);
+            System.out.println("I am car: " + car.getid() + "  in position: " + position);
             rl.unlock();
         }
-        return 0;
     }
 
     public void finish(Car car) {
@@ -106,11 +104,9 @@ public class RaceMonitor {
                 movedCars++;
                 if (movedCars != totalCars) {
                     move.get(car.getid() + 1).signal();
-                    System.out.println("I am car: "+car.getid()+" and i am signaling "+movedCars);
                 } else if (movedCars == totalCars) {
                     move.get(0).signal();
                     movedCars = 0;
-                    System.out.println("I am car: "+car.getid()+" and i am signaling "+movedCars);
                 }
                 move.get(car.getid()).await();
             }
@@ -120,7 +116,6 @@ public class RaceMonitor {
             for(Condition c : move){
                 c.signal();
             }
-            System.out.println("Race is over");
             rl.unlock();
         }
     }

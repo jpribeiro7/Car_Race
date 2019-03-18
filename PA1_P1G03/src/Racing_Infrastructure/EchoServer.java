@@ -22,7 +22,7 @@ public class EchoServer {
         serverSocket = new ServerSocket( port );
         System.out.println( "Server is listening on port: " + port );
         while (true ) {
-            System.out.println( "Server is accepting a new connection");
+            System.out.println( "Server is accepting a new connection" );
             // wait for a new connection/client
             clientSocket = serverSocket.accept();
             // create a new thread to deal with the new client

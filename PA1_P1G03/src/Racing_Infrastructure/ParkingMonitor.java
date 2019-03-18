@@ -16,18 +16,19 @@ public class ParkingMonitor {
 
     private boolean waitingRace = false;
     private int numberOfCars;
-    private int parkedCars = 0;
+    private int carsToRace;
+    private int inLine;
     
-    public ParkingMonitor(int numberOfCars){
+    public ParkingMonitor(int numberOfCars, int carsToRace){
         this.numberOfCars = numberOfCars;
+        this.carsToRace = carsToRace;
     }
     
 
-    public synchronized void waitingForNewRace(int id) {
+    public synchronized void waitingForNewRace(Car car) {
         try {
-            System.out.println("Car nº"+ id+" waiting for a race ... ");
-            parkedCars++;
-            while (waitingRace) {
+            System.out.println("I am car: "+ car.getid()+" waiting for a race ... ");
+            while (waitingRace || car.getid()>=carsToRace) {
                 wait();
             }
             notifyAll();
@@ -36,21 +37,19 @@ public class ParkingMonitor {
         }
     }
     
-    public synchronized void prepareNewRace() {
+    public synchronized void prepareNewRace(Car car) {
         try {
-            System.out.println("Waiting for race to start ... ");
+            
             waitingRace = false;
-            while (parkedCars!=numberOfCars) {
+            while (car.getid()!=inLine) {
                 wait();
             }
-            System.out.println("Race has started");
+            System.out.println("I am car: "+car.getid()+" and I've lined up for the race");
+            inLine++;
             notifyAll();
         } catch (InterruptedException ex) {
             notifyAll();
         }
     }
 
-    public void findRace(){
-        waitingRace = false;
-    }
 }

@@ -45,9 +45,8 @@ class ThreadEcho extends Thread {
                     System.out.println("End of communication");
                     break;
                 }
-                System.out.println("Server received a new message: " + text);
-                System.out.println("Server received a new message: " + text1);
-                //System.out.println("\n\nServer received a new message: " + text2);
+                System.out.println("Server received a new message: " + text );
+                System.out.println("Server received a new message: " + text1 );
 
                 // random sleep to induce a processing delay
                 sleep( (int) (Math.random() * 10) * 1000);
@@ -67,19 +66,9 @@ class ThreadEcho extends Thread {
                 // Threads to increment
                 for (int i=0; i<nIncThreads; i++) {
                     // create instance of class extending Thread
-                    myThreadAdd[i] = new Car(i,parkingMonitor, raceMonitor, num, sec,0);
+                    myThreadAdd[i] = new Car(i,parkingMonitor, raceMonitor, num, sec);
                     // launch thread
                     myThreadAdd[i].start();
-                    
-                }
-                
-                
-                String text2 = in.readLine() ;
-                if(text2.equals("stop")){
-                    for (int i=0; i<nIncThreads; i++) {
-                    myThreadAdd[i].terminate(); 
-                    System.out.println("STOOPPP");
-                    }
                 }
                 
                 try {
