@@ -20,33 +20,31 @@ public class Main {
     public static void main(String[] args) throws InterruptedException {
         
         
-        int nIncThreads = 10;
-        Car[] myThreadAdd = new Car[nIncThreads];
+        int nThreads = 10;
+        Car[] myThreadAdd = new Car[nThreads];
         
-        /*
-        System.out.println("Number of cars to race: ");
-        Scanner in = new Scanner(System.in);
-        int num = Integer.parseInt(in.nextLine());        //String s = in.next();
-        System.out.println("Time between cars (seconds):");
-        float sec = Integer.parseInt(in.nextLine());
-        */
-        // Monitor: the shared area
         int num =5;
         int sec=1;
-        ParkingMonitor parkingMonitor = new ParkingMonitor(nIncThreads,num);
-        RaceMonitor raceMonitor = new RaceMonitor(num, 15);
+        Monitor monitor = new Monitor(nThreads);
+        GraphicController gc = new GraphicController((IGraphicalMonitor) monitor);
+        gc.start();
+        
+        
+        //Thread.sleep(200);
         
         // Threads to increment
-        for (int i=0; i<nIncThreads; i++) {
+        for (int i=0; i<nThreads; i++) {
             // create instance of class extending Thread
-            myThreadAdd[i] = new Car(i,parkingMonitor, raceMonitor, num, sec);
+            myThreadAdd[i] = new Car(i,(IParkingMonitor) monitor, (IRaceMonitor) monitor, num, sec);
             // launch thread
             myThreadAdd[i].start();
         }
         
+        
+        
        
         // wait for end of computation in case the Threads die voluntarly
-        for (int i =0; i<nIncThreads; i++)
+        for (int i =0; i<nThreads; i++)
             // wait while the thread does not die
             myThreadAdd[i].join();
     }

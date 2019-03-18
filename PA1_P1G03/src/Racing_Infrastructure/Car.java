@@ -14,14 +14,14 @@ import java.util.logging.Logger;
  */
 public class Car extends Thread{
     private int id;
-    private ParkingMonitor parkingMonitor;
-    private RaceMonitor raceMonitor;
+    private IParkingMonitor parkingMonitor;
+    private IRaceMonitor raceMonitor;
     private int currentPosition = 0;
     private boolean isFinished=false;
     private int contenders;
     private int time;
 
-    public Car(int id, ParkingMonitor parkingMonitor, RaceMonitor raceMonitor, int contenders, float timeMil) {
+    public Car(int id, IParkingMonitor parkingMonitor, IRaceMonitor raceMonitor, int contenders, float timeMil) {
         this.id = id;
         this.parkingMonitor = parkingMonitor;
         this.raceMonitor = raceMonitor;

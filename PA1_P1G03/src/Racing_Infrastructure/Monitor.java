@@ -18,8 +18,16 @@ import java.util.Set;
  *
  * @author Pedro
  */
-public class RaceMonitor {
-
+public class Monitor implements IGraphicalMonitor, IParkingMonitor, IRaceMonitor{
+    private final int trackSize = 17;
+    // Parking controls
+    private boolean waitingRace = false;
+    private int numberOfCars;
+    private int carsToRace;
+    private int inLine;
+    
+    
+    // RaceTrack controls
     private ReentrantLock rl;
     private List<Condition> move;
     private boolean finish = false;
@@ -28,18 +36,46 @@ public class RaceMonitor {
     private int movedCars;
     private int totalCars;
     private int finishedCars;
-    private int trackSize;
+    
 
-    public RaceMonitor(int n_threads, int trackSize) {
+    public Monitor(int n_threads) {
         rl = new ReentrantLock(true);
-        totalCars = n_threads;
-        move = new ArrayList();
-        for (int i = 0; i < n_threads; i++) {
-            move.add(rl.newCondition());
-        }
-        this.trackSize = trackSize;
+        
     }
     
+    // ParkingLot methods
+    public synchronized void waitingForNewRace(Car car) {
+        try {
+            System.out.println("I am car: "+ car.getid()+" waiting for a race ... ");
+            while (waitingRace || car.getid()>=totalCars) {
+                wait();
+            }
+            notifyAll();
+        } catch (InterruptedException ex) {
+            notifyAll();
+        }
+    }
+    
+    public synchronized void prepareNewRace(Car car) {
+        try {
+            
+            waitingRace = false;
+            while (car.getid()!=inLine) {
+                wait();
+            }
+            System.out.println("I am car: "+car.getid()+" and I've lined up for the race");
+            inLine++;
+            notifyAll();
+        } catch (InterruptedException ex) {
+            notifyAll();
+        }
+    }
+    
+    
+    
+    
+    
+    // RaceTrack Methods
     public void startRace(Car car) {
         rl.lock();
         try {
@@ -120,7 +156,7 @@ public class RaceMonitor {
         }
     }
 
-    public int trackSize() {
+    public synchronized int trackSize() {
         return trackSize;
     }
 
@@ -130,6 +166,39 @@ public class RaceMonitor {
         int high = 5;
         int result = r.nextInt(high - low) + low;
         return result;
+    }
+
+    
+    
+    // Graphical Controls
+    @Override
+    public synchronized void setRaceConfig(int cars, int timeout) {
+        totalCars = cars;
+        move = new ArrayList();
+        for (int i = 0; i < totalCars; i++) {
+            move.add(rl.newCondition());
+        }
+        System.out.println("configs done");
+    }
+
+    @Override
+    public void setRaceAvailable() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setPrepareRace() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setStartRace() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setStopRace() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

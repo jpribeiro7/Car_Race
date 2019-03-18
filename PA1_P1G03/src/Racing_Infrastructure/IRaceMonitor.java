@@ -10,6 +10,9 @@ package Racing_Infrastructure;
  * @author Pedro
  */
 public interface IRaceMonitor {
-    public void waitingForNewRace(Car car);
-    public void prepareNewRace(Car car);
+    public void startRace(Car car);
+    public void move(Car car);
+    public void finish(Car car);
+    public int trackSize();
+    
 }

@@ -10,8 +10,6 @@ package Racing_Infrastructure;
  * @author Pedro
  */
 public interface IParkingMonitor {
-    public void startRace(Car car);
-    public void move(Car car);
-    public void finish(Car car);
-    
+    public void waitingForNewRace(Car car);
+    public void prepareNewRace(Car car);
 }

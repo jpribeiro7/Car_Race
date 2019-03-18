@@ -10,6 +10,7 @@ package Racing_Infrastructure;
  * @author Pedro
  */
 public interface IGraphicalMonitor {
+    public void setRaceConfig(int cars, int timeout);
     public void setRaceAvailable();
     public void setPrepareRace();
     public void setStartRace();
