@@ -25,13 +25,22 @@ public class Tetse {
                 int myint = keyboard.nextInt();
                 switch(myint){
                         case 1: 
-                           t.prepareRace(2,500);
+                           t.prepareRace(7,1000);
                             System.out.println("ppppp");
                            break;
                         case 2:
                            t.StartRace();
                             System.out.println("ssss");
                            break;
+                        
+                        case 3:
+                            t.StopRace();
+                            break;
+                            
+                        case 4:
+                            String response = t.getPosition(0);
+                            System.out.println(response);
+                            
                 }
             }
             

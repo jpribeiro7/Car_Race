@@ -18,21 +18,18 @@ public class Car extends Thread{
     private IRaceMonitor raceMonitor;
     private int currentPosition = 0;
     private boolean isFinished=false;
-    private int contenders;
-    private int time;
 
-    public Car(int id, IParkingMonitor parkingMonitor, IRaceMonitor raceMonitor, int contenders, float timeMil) {
+    public Car(int id, IParkingMonitor parkingMonitor, IRaceMonitor raceMonitor) {
         this.id = id;
         this.parkingMonitor = parkingMonitor;
         this.raceMonitor = raceMonitor;
-        this.contenders = contenders;
-        this.time = (int) (timeMil*1000);
     }
     
     
     
     @Override
     public void run(){ 
+        while(true){
         parkingMonitor.waitingForNewRace(this);
         parkingMonitor.prepareNewRace(this);
         raceMonitor.startRace(this);
@@ -43,6 +40,9 @@ public class Car extends Thread{
         isFinished = true;
         System.out.println("I am car: "+id+" and i finished");
         raceMonitor.finish(this); 
+        isFinished = false;
+        currentPosition = 0;
+        }
     }
     
     public int getCurrentPosition(){

@@ -56,7 +56,7 @@ public class EchoClient2 {
         BufferedReader stdIn1 = new BufferedReader( new InputStreamReader( System.in ) );
         
         String expression = "prepareNew," + String.valueOf(numberOfCars) + "," + String.valueOf(timeOut);
-        
+        System.out.println("TIMEOUT CARALHO "+timeOut);
         while( true ) {
                        
             // send the message to the server
@@ -209,7 +209,7 @@ public class EchoClient2 {
             txt = in.readLine();
             // print echo
             System.out.println( "Client received echo: " + txt );
-            if(txt.equals("Race stoped"))
+            if(!txt.equals(""))
                 break;
         }
         // empty message -> close connection

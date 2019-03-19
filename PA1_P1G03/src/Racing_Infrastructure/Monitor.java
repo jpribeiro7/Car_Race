@@ -13,6 +13,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -21,7 +23,7 @@ import java.util.Set;
 public class Monitor implements IGraphicalMonitor, IParkingMonitor, IRaceMonitor{
     private final int trackSize = 17;
     // Parking controls
-    private boolean waitingRace = false;
+    private boolean waitingRace = true;
     private int numberOfCars;
     private int carsToRace;
     private int inLine;
@@ -32,10 +34,12 @@ public class Monitor implements IGraphicalMonitor, IParkingMonitor, IRaceMonitor
     private List<Condition> move;
     private boolean finish = false;
     private boolean startRace = false;
+    private boolean stop = false;
     private int startedCars=0;
     private int movedCars;
     private int totalCars;
     private int finishedCars;
+    private int time;
     
 
     public Monitor(int n_threads) {
@@ -79,7 +83,7 @@ public class Monitor implements IGraphicalMonitor, IParkingMonitor, IRaceMonitor
     public void startRace(Car car) {
         rl.lock();
         try {
-            while (startedCars != car.getid() || startRace) 
+            while (startedCars != car.getid() || !startRace) 
             {
                 move.get(car.getid()).await();
             }
@@ -100,19 +104,24 @@ public class Monitor implements IGraphicalMonitor, IParkingMonitor, IRaceMonitor
     public void move(Car car){
         rl.lock();
         try {
-            while (movedCars != car.getid()) // wait for Dec Thread to decrement count
+            while (movedCars != car.getid()) 
             {
                 move.get(car.getid()).await();
             }
 
         } catch (Exception ex) {
         } finally {
+            
             // always inside a finally block.
             // move random amount of steps
             int steps = generateRandomStep();
             car.move(steps);
-
-            //Thread.sleep(time);
+            
+            try {
+                Thread.sleep(time);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Monitor.class.getName()).log(Level.SEVERE, null, ex);
+            }
             int position = car.getCurrentPosition();
             if (position >= trackSize) {
                 finishedCars++;
@@ -160,15 +169,6 @@ public class Monitor implements IGraphicalMonitor, IParkingMonitor, IRaceMonitor
         return trackSize;
     }
 
-    public int generateRandomStep() {
-        Random r = new Random();
-        int low = 1;
-        int high = 5;
-        int result = r.nextInt(high - low) + low;
-        return result;
-    }
-
-    
     
     // Graphical Controls
     @Override
@@ -178,27 +178,56 @@ public class Monitor implements IGraphicalMonitor, IParkingMonitor, IRaceMonitor
         for (int i = 0; i < totalCars; i++) {
             move.add(rl.newCondition());
         }
+        time = timeout;
+        finish = false;
+        stop = false;
+        waitingRace = true;
+        startRace = false;
+        startedCars=0;
+        movedCars=0;
+        finishedCars=0;
+        numberOfCars = 0;
+        carsToRace = 0;
+        inLine = 0;
         System.out.println("configs done");
+        
     }
 
     @Override
-    public void setRaceAvailable() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public synchronized void setRaceAvailable() {
+        waitingRace = false;
+        notifyAll();
     }
 
     @Override
-    public void setPrepareRace() {
+    public synchronized void setPrepareRace() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void setStartRace() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        rl.lock();
+        startRace = true;
+        move.forEach(cnsmr->cnsmr.signal());
+        rl.unlock();
     }
 
     @Override
     public void setStopRace() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        rl.lock();
+        stop = true;
+        move.get(0).signal();
+        rl.unlock();
+    }
+    
+    
+    
+    private int generateRandomStep() {
+        Random r = new Random();
+        int low = 1;
+        int high = 5;
+        int result = r.nextInt(high - low) + low;
+        return result;
     }
 
 }

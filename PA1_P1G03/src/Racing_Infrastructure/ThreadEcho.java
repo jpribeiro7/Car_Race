@@ -42,7 +42,7 @@ class ThreadEcho extends Thread {
             out = new PrintWriter(socket.getOutputStream(), true);
             // socket's input stream
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            while (true) {
+            
                 // wait for a message from the client
                 System.out.println("Thread is waiting for a new message");
                 String request = in.readLine();
@@ -55,7 +55,7 @@ class ThreadEcho extends Thread {
                 if (expression == null) {
                     // end of communication with this client
                     System.out.println("End of communication");
-                    break;
+                    
                 }
                 System.out.println("Server received a new message: "+ expression);
                 System.out.println("Server received a new message: " + numcars);
@@ -71,8 +71,8 @@ class ThreadEcho extends Thread {
                 
                 switch(expression){
                         case "prepareNew":
-                            graphicalMonitor.setRaceConfig(Integer.parseInt(numcars),Integer.parseInt(numcars));
-                            //graphicalMonitor.setRaceAvailable();
+                            graphicalMonitor.setRaceConfig(Integer.parseInt(numcars),Integer.parseInt(timeout));
+                            graphicalMonitor.setRaceAvailable();
                             //graphicalMonitor.setPrepareRace();
                             out.println("Preparing new race");
                             break;
@@ -100,7 +100,7 @@ class ThreadEcho extends Thread {
                     System.out.println("JOIIIIIIIINNNNN\n\n");
                 } catch(Exception ex) {}
         */
-            }
+            
             // close everything
             socket.close();
             out.close();
